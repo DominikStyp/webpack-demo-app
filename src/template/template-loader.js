@@ -8,8 +8,8 @@ class TemplateLoader {
     getTemplateHTML() {
         const htmlWebpackPlugin = this.htmlWebpackPlugin;
         const data = {
-            head: `<title>Test title</title>${htmlWebpackPlugin.tags}`,
-            body: `<h1>This is body</h1>${htmlWebpackPlugin.tags}`,
+            head: `<title>Test title</title>\n${htmlWebpackPlugin.tags.headTags}`,
+            body: `<h1>This is body</h1>\n${htmlWebpackPlugin.tags.bodyTags}`,
         };
         const compiled = _.template(this.readFile(__dirname + '/template.html'));
         return compiled(data);

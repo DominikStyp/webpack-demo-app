@@ -1,8 +1,9 @@
 const path = require("path");
 const common = require("./webpack.common");
-const merge = require("webpack-merge");
-var HtmlWebpackPlugin = require("html-webpack-plugin");
+const { merge } = require("webpack-merge");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TemplateLoader = require("./src/template/template-loader");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = merge(common, {
   mode: "development",
@@ -14,20 +15,37 @@ module.exports = merge(common, {
       new HtmlWebpackPlugin({
         inject: false,
         templateContent: ({htmlWebpackPlugin}) => {
-          console.log(htmlWebpackPlugin);
           const loader = new TemplateLoader(htmlWebpackPlugin);
           return loader.getTemplateHTML();
         }
-      })
+      }),
+      new MiniCssExtractPlugin({
+        // Options similar to the same options in webpackOptions.output
+        // both options are optional
+        filename: "[name].css",
+        chunkFilename: "[id].css",
+      }),
   ],
   module: {
     rules: [
       {
         test: /\.scss$/,
         use: [
-          "style-loader", //3. Inject styles into DOM
-          "css-loader", //2. Turns css into commonjs
-          "sass-loader" //1. Turns sass into css
+          //"style-loader", //3. Inject styles into DOM
+            // TODO: loading sourceMaps doesn't work
+          MiniCssExtractPlugin.loader, // 3. extracts css into separate files
+          {
+            loader: "css-loader",
+            options: {
+              sourceMap: true,
+            },
+          },
+          {
+            loader: "sass-loader",
+            options: {
+              sourceMap: true
+            },
+          },
         ]
       }
     ]
