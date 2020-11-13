@@ -14,6 +14,7 @@ module.exports = merge(common, {
       new HtmlWebpackPlugin({
         inject: false,
         templateContent: ({htmlWebpackPlugin}) => {
+          console.log(htmlWebpackPlugin);
           const loader = new TemplateLoader(htmlWebpackPlugin);
           return loader.getTemplateHTML();
         }
