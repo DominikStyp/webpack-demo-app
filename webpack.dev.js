@@ -7,6 +7,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = merge(common, {
   mode: "development",
+  devtool: 'source-map', // https://webpack.js.org/configuration/devtool/
   output: {
     filename: "[name].bundle.js",
     path: path.resolve(__dirname, "dist")
@@ -32,7 +33,6 @@ module.exports = merge(common, {
         test: /\.scss$/,
         use: [
           //"style-loader", //3. Inject styles into DOM
-            // TODO: loading sourceMaps doesn't work
           MiniCssExtractPlugin.loader, // 3. extracts css into separate files
           {
             loader: "css-loader",
@@ -47,7 +47,12 @@ module.exports = merge(common, {
             },
           },
         ]
-      }
+      },
+      {
+        test: /\.js$/,
+        enforce: 'pre',
+        use: ['source-map-loader'],
+      },
     ]
   }
 });
