@@ -1,26 +1,38 @@
-const _ = require('lodash');
-const fs = require('fs');
+const TemplateCompiler = require('./template-compiler');
 
 class TemplateLoader {
+
     constructor(HtmlWebpackPlugin) {
        this.htmlWebpackPlugin = HtmlWebpackPlugin;
+       this.compiler = new TemplateCompiler(HtmlWebpackPlugin);
+    }
+
+    /**
+     * # means it's private member
+     * @returns {*}
+     */
+    getCompiledBody() {
+        const bodyData = {
+            helloVar: 'Hello world!'
+        };
+        const data = {
+            ...bodyData,
+            nav: this.compiler.getCompiledTemplate('nav.html', bodyData),
+            footer: this.compiler.getCompiledTemplate('footer.html', bodyData)
+        };
+        return this.compiler.getCompiledTemplate('body.html', data);
     }
     getTemplateHTML() {
         const htmlWebpackPlugin = this.htmlWebpackPlugin;
+        const compiledBody = this.getCompiledBody();
         const data = {
-            head: `<title>Test title</title>\n${htmlWebpackPlugin.tags.headTags}`,
-            body: `<h1>This is body</h1>\n${htmlWebpackPlugin.tags.bodyTags}`,
+            title: 'This is passed title',
+            head: `${htmlWebpackPlugin.tags.headTags}`,
+            body: `${compiledBody}${htmlWebpackPlugin.tags.bodyTags}`,
         };
-        const compiled = _.template(this.readFile(__dirname + '/template.html'));
-        return compiled(data);
+        return this.compiler.getCompiledTemplate('template.html', data);
     }
-    readFile(path) {
-        try {
-            return fs.readFileSync(path, 'utf8');
-        } catch(e) {
-            console.log('Error:', e.stack);
-        }
-    }
+
 
 }
 
