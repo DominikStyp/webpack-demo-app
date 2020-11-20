@@ -5,12 +5,20 @@ const HtmlWebpackPlugin = require("html-webpack-plugin");
 const TemplateLoader = require("./src/template/template-loader");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
+console.log("!!!DEV CONFIGURATION LOADED!!!");
+
 module.exports = merge(common, {
   mode: "development",
   devtool: 'source-map', // https://webpack.js.org/configuration/devtool/
   output: {
     filename: "[name].bundle.js",
     path: path.resolve(__dirname, "dist")
+  },
+  devServer: {
+    contentBase: path.join(__dirname, 'dist'),
+    compress: true,
+    port: 9000,
+    open: true
   },
   plugins: [
       new HtmlWebpackPlugin({
@@ -47,6 +55,11 @@ module.exports = merge(common, {
             },
           },
         ]
+      },
+      {
+        test: /\.ts?$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
       },
       {
         test: /\.js$/,
